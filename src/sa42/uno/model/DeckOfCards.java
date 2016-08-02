@@ -1,44 +1,59 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sa42.uno.model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
-/**
- *
- * @author BP
- */
-public class Deck {
+public class DeckOfCards {
 
     private int numberOfCards;
     private List<Card> deck;
 
-    public Deck() {
-        populate();
+    public DeckOfCards() {
+        populate();        
+        numberOfCards = deck.size();
+    }
+    
+    public Card takeCard(){
+        
+        Card chosenCard = getDeck().get(getNumberOfCards()-1);
+        setNumberOfCards(getNumberOfCards()-1);
+        getDeck().remove(getDeck().size()-1);
+        
+        if(getDeck().size()==getNumberOfCards()){
+            return chosenCard;
+        }else{
+            return null;
+        }       
     }
 
     public void shuffle() {
+        Random randomCards = new Random();
         
+        for(int first = 0;first < getDeck().size();first++){
+            
+            int second = randomCards.nextInt(getDeck().size());
+            Card temp = getDeck().get(first);
+            getDeck().set(first, getDeck().get(second));
+            getDeck().set(second,temp);
+            
+        }
     }
 
     private void populate() {
 
-        deck = new LinkedList<>();
+        setDeck(new LinkedList<>());
         String[] colors = {"Red", "Yellow", "Green", "Blue"};
         String[] types = {"Skip", "Reverse", "TakeTwo"};
 
         for (String c : colors) {
-            deck = loopNumbers(c, getDeck());
+            setDeck(loopNumbers(c, getDeck()));
             for (String t : types) {
-                deck = loopSpecialTypes(t, c, getDeck());
+                setDeck(loopSpecialTypes(t, c, getDeck()));
             }
         }
 
-        deck = loopWild(getDeck());
+        setDeck(loopWild(getDeck()));
 
     }
 
@@ -95,14 +110,21 @@ public class Deck {
     public List<Card> getDeck() {
         return deck;
     }
-
+    
+    private void setDeck(List<Card> deck) {
+        this.deck = deck;
+    }
+    
     @Override
     public String toString() {
-        String output = "";
-        for (int i = 0; i < deck.size(); i++) {
-            output += deck.get(i).toString() + "\n";
-        }
-        return output;
+        return "Deck: " + "number of cards=" + getNumberOfCards();        
     }
 
+    public int getNumberOfCards() {
+        return numberOfCards;
+    }
+
+    public void setNumberOfCards(int numberOfCards) {
+        this.numberOfCards = numberOfCards;
+    }
 }
