@@ -5,6 +5,9 @@ public class Card {
     private String type;
     private int value;
     private String image;
+    
+    //enum color {};
+    enum value{};
 
     public String getColor() {
         return color;

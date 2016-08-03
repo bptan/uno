@@ -117,7 +117,8 @@ public class DeckOfCards {
     
     @Override
     public String toString() {
-        return "Deck: " + "number of cards=" + getNumberOfCards();        
+        return "Deck: " + "number of cards=" + getNumberOfCards() 
+                + "\nlist size="+ deck.size();        
     }
 
     public int getNumberOfCards() {
