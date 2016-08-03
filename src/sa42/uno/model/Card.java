@@ -11,7 +11,7 @@ public class Card {
         return color;
     }
 
-    protected void setColor(String color) {
+    void setColor(String color) {
         this.color = color;
     }
 
@@ -19,7 +19,7 @@ public class Card {
         return type;
     }
 
-    protected void setType(String type) {
+    void setType(String type) {
         this.type = type;
     }
 
@@ -27,7 +27,7 @@ public class Card {
         return value;
     }
 
-    protected void setValue(int value) {
+    void setValue(int value) {
         this.value = value;
     }
 
@@ -35,7 +35,7 @@ public class Card {
         return image;
     }
 
-    protected void setImage(String image) {
+    void setImage(String image) {
         this.image = image;
     }
 

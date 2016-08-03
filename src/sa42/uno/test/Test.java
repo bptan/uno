@@ -2,7 +2,6 @@ package sa42.uno.test;
 
 import java.util.List;
 import sa42.uno.model.Card;
-import sa42.uno.model.DeckOfCards;
 import sa42.uno.model.Game;
 import sa42.uno.model.Player;
 
@@ -11,14 +10,14 @@ public class Test {
     public static void main(String[] args) {
 
         Game game = new Game();
-        System.out.println("Game created with ID: " + game.getId());
+        
         //create 5 players
         Player player1 = new Player("Elon");
         Player player2 = new Player("Carl");
         Player player3 = new Player("Warren");
         Player player4 = new Player("Bill");
         Player player5 = new Player("Jack");
-        System.out.println("Players created");
+        
 
         //add players to game      
         game.addPlayer(player1);
@@ -26,9 +25,10 @@ public class Test {
         game.addPlayer(player3);
         game.addPlayer(player4);
         game.addPlayer(player5);
-        System.out.println("Players added");
+        
 
         game.setStatus(Game.Status.Started);
+        
         System.out.println(game.toString());
 
         List<Player> players = game.getPlayers();
@@ -57,7 +57,7 @@ public class Test {
 
         int sizeOfPile = game.addToDiscardPile(card);
 
-        System.out.println("Just Discarded:\n"
+        System.out.println("\nJust Discarded:\n"
                 + game.getDiscardPile().get(sizeOfPile - 1));
 
         System.out.println(">>Remaining cards: "

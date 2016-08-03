@@ -66,7 +66,7 @@ public class Game {
     }
 
     public Card takeCardFromDeck() {
-        return getDeck().takeCard();
+        return deck.takeCard();
     }
 
     public int addToDiscardPile(Card c) {
