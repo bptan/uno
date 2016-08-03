@@ -41,7 +41,6 @@ public class Player {
         for (int i = 0; i < hand.size(); i++) {
             listOfCards += hand.get(i).toString() + "\n";
         }
-
         return "Player: " + "Name=" + name + ",\nHand=\n" + listOfCards;
 
     }

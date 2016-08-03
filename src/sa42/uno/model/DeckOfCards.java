@@ -1,70 +1,45 @@
 package sa42.uno.model;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class DeckOfCards {
 
-    private int numberOfCards;
-    private List<Card> deck;
+    private Stack<Card> deck;
 
     public DeckOfCards() {
-        populate();        
-        numberOfCards = deck.size();
-    }
-    
-    public Card takeCard(){
-        
-        Card chosenCard = getDeck().get(getNumberOfCards()-1);
-        setNumberOfCards(getNumberOfCards()-1);
-        getDeck().remove(getDeck().size()-1);
-        
-        if(getDeck().size()==getNumberOfCards()){
-            return chosenCard;
-        }else{
-            return null;
-        }       
+        deck = new Stack<>();
+        populate();
     }
 
-    public void shuffle() {
-        Random randomCards = new Random();
-        
-        for(int first = 0;first < getDeck().size();first++){
-            
-            int second = randomCards.nextInt(getDeck().size());
-            Card temp = getDeck().get(first);
-            getDeck().set(first, getDeck().get(second));
-            getDeck().set(second,temp);
-            
-        }
+    public Card takeCard() {
+        return getDeck().pop();
     }
 
     private void populate() {
 
-        setDeck(new LinkedList<>());
         String[] colors = {"Red", "Yellow", "Green", "Blue"};
         String[] types = {"Skip", "Reverse", "TakeTwo"};
 
         for (String c : colors) {
             setDeck(loopNumbers(c, getDeck()));
             for (String t : types) {
-                setDeck(loopSpecialTypes(t, c, getDeck()));
+                setDeck(getSpecialTypeCards(t, c, getDeck()));
             }
         }
 
-        setDeck(loopWild(getDeck()));
+        setDeck(getWildCards(getDeck()));
 
     }
 
-    private List<Card> loopNumbers(String color, List<Card> deck) {
+    private Stack<Card> loopNumbers(String color, Stack<Card> deck) {
 
         for (int value = 0; value < 10; value++) {
             Card c = new Card();
             c.setColor(color);
-            c.setType("Normal");
+            c.setType("Number");
             c.setValue(value);
-            c.setImage(color + "Normal" + value);
+            c.setImage(color + "Number" + value);
 
             if (value != 0) {
                 deck.add(c);
@@ -76,7 +51,7 @@ public class DeckOfCards {
         return deck;
     }
 
-    private List<Card> loopSpecialTypes(String type, String color, List<Card> deck) {
+    private Stack<Card> getSpecialTypeCards(String type, String color, Stack<Card> deck) {
         Card c = new Card();
         c.setColor(color);
         c.setType(type);
@@ -87,11 +62,10 @@ public class DeckOfCards {
         return deck;
     }
 
-    private List<Card> loopWild(List<Card> deck) {
+    private Stack<Card> getWildCards(Stack<Card> deck) {
 
         String color = "Wild";
         String[] types = {"Normal", "TakeFour"};
-        
 
         for (String t : types) {
             Card c = new Card();
@@ -107,25 +81,22 @@ public class DeckOfCards {
         return deck;
     }
 
-    public List<Card> getDeck() {
+    protected Stack<Card> getDeck() {
         return deck;
     }
-    
-    private void setDeck(List<Card> deck) {
+
+    private void setDeck(Stack<Card> deck) {
         this.deck = deck;
-    }
-    
-    @Override
-    public String toString() {
-        return "Deck: " + "number of cards=" + getNumberOfCards() 
-                + "\nlist size="+ deck.size();        
     }
 
     public int getNumberOfCards() {
-        return numberOfCards;
+        return deck.size();
     }
 
-    public void setNumberOfCards(int numberOfCards) {
-        this.numberOfCards = numberOfCards;
+    @Override
+    public String toString() {
+        return "Deck: " + "number of cards="
+                + deck.size();
     }
+
 }

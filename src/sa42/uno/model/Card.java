@@ -1,19 +1,17 @@
 package sa42.uno.model;
 
 public class Card {
+
     private String color;
     private String type;
     private int value;
     private String image;
-    
-    //enum color {};
-    enum value{};
 
     public String getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    protected void setColor(String color) {
         this.color = color;
     }
 
@@ -21,7 +19,7 @@ public class Card {
         return type;
     }
 
-    public void setType(String type) {
+    protected void setType(String type) {
         this.type = type;
     }
 
@@ -29,7 +27,7 @@ public class Card {
         return value;
     }
 
-    public void setValue(int value) {
+    protected void setValue(int value) {
         this.value = value;
     }
 
@@ -37,15 +35,14 @@ public class Card {
         return image;
     }
 
-    public void setImage(String image) {
+    protected void setImage(String image) {
         this.image = image;
     }
-    
-    
+
     @Override
-	public String toString() {
-		return "Card: " + "color=" + color + ", type=" + type
-                        + ", value="+value + ", image="+image;
-	}
-    
+    public String toString() {
+        return "Card: " + "color=" + color + ", type=" + type
+                + ", value=" + value + ", image=" + image;
+    }
+
 }
