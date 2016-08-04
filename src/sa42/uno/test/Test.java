@@ -9,7 +9,7 @@ public class Test {
 
     public static void main(String[] args) {
 
-        Game game = new Game();
+        Game game = new Game("new game");
         
         //create 5 players
         Player player1 = new Player("Elon");
