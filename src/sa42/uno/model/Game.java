@@ -12,14 +12,16 @@ public class Game {
         Waiting, Started, Ended
     };
     private String id;
+    private final String title;
     private DeckOfCards deck;
     private List<Player> players;
     private Stack<Card> discardPile;
     private Status status;
 
-    public Game() {
+    public Game(String title) {
         UUID uuid = new UUID(0, 8);
         id = uuid.randomUUID().toString().substring(0, 8);
+        this.title = title;
         deck = new DeckOfCards();
         deck = shuffle(deck);
         players = new ArrayList<>();
@@ -109,7 +111,7 @@ public class Game {
     @Override
     public String toString() {
 
-        return "Game ID: " + id + ", Status: " + status
+        return "Game ID: " + id + ", Title: " + title+ ", Status: " + status
                 + ", Number Of Players: " + players.size();
 
     }
