@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
-import java.util.UUID;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 public class Game {
 
@@ -18,9 +19,9 @@ public class Game {
     private Stack<Card> discardPile;
     private Status status;
 
-    public Game(String title) {
-        UUID uuid = new UUID(0, 8);
-        id = uuid.randomUUID().toString().substring(0, 8);
+    public Game(String id, String title) {
+        this.id = id;
+        
         this.title = title;
         deck = new DeckOfCards();
         deck = shuffle(deck);
@@ -115,4 +116,13 @@ public class Game {
                 + ", Number Of Players: " + players.size();
 
     }
+    
+    public JsonObject toJson() {
+		return (Json.createObjectBuilder()
+				.add("gameid", id)
+				.add("title", title)
+				.add("status", status.toString())
+				.add("numOfPlayers", players.size())
+				.build());
+	}
 }
