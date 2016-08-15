@@ -1,5 +1,8 @@
 package sa42.uno.model;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 public class Card {
 
     private String color;
@@ -44,5 +47,14 @@ public class Card {
         return "Card: " + "color=" + color + ", type=" + type
                 + ", value=" + value + ", image=" + image;
     }
+    
+    public JsonObject toJson() {
+		return (Json.createObjectBuilder()
+				.add("color", color)
+				.add("type", type)
+				.add("value", value)
+				.add("image", image)
+				.build());
+	}
 
 }

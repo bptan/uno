@@ -1,10 +1,15 @@
 package sa42.uno.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Stack;
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
 public class Game {
@@ -12,10 +17,10 @@ public class Game {
     public enum Status {
         Waiting, Started, Ended
     };
-    private String id;
+    private final String id;
     private final String title;
     private DeckOfCards deck;
-    private List<Player> players;
+    private Map<String,Player> players;
     private Stack<Card> discardPile;
     private Status status;
 
@@ -25,16 +30,64 @@ public class Game {
         this.title = title;
         deck = new DeckOfCards();
         deck = shuffle(deck);
-        players = new ArrayList<>();
+        players = new HashMap<>();
         discardPile = new Stack<>();
         status = Status.Waiting;
+    }
+    public JsonObject toJson() {
+        
+        
+		return (Json.createObjectBuilder()
+				.add("gameid", id)
+				.add("title", title)
+				.add("status", status.toString())
+				.add("numOfPlayers", players.size())
+                                                       
+				.build());
+	}
+    
+    public JsonObject toGameTableJson(){
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        Iterator it = players.entrySet().iterator();
+            while (it.hasNext()){
+                Map.Entry pair = (Map.Entry<String, Player>)it.next();
+                Player p = (Player)pair.getValue();
+                arrayBuilder.add(p.getName());
+                
+            }     
+        JsonArray playerNameAsJsonArray = arrayBuilder.build();
+        
+        
+		return (Json.createObjectBuilder()
+				.add("gameid", id)
+				.add("title", title)
+				.add("status", status.toString())
+                                .add("deckSize", deck.getNumberOfCards())
+				.add("numOfPlayers", players.size())
+                                .add("playerNames", playerNameAsJsonArray)
+                                .add("topCardOfDiscardPile",discardPile
+                                   .get(discardPile.size()-1).getImage())                        
+				.build());
+    }
+    
+    public Optional<Player> getPlayer(String name){
+        
+        return Optional.ofNullable(players.get(name));
     }
 
     public void distributeCards() {
         for (int whichCard = 0; whichCard < 7; whichCard++) {
-            for (int whichPlayer = 0; whichPlayer < players.size(); whichPlayer++) {
-                players.get(whichPlayer).addCard(deck.takeCard());
+            
+            Iterator it = players.entrySet().iterator();
+            while (it.hasNext()){
+                Map.Entry pair = (Map.Entry<String, Player>)it.next();
+                Player p = (Player)pair.getValue();
+                p.addCard(deck.takeCard());
             }
+//            for (int whichPlayer = 0; whichPlayer < players.size(); whichPlayer++) {
+//                players.get(whichPlayer).addCard(deck.takeCard());
+//            }
         }
     }
 
@@ -63,9 +116,9 @@ public class Game {
         return cards;
     }
 
-    public boolean addPlayer(Player p) {
+    public Player addPlayer(Player p) {
 
-        return players.add(p);
+        return players.put(p.getName(), p);
     }
 
     public Card takeCardFromDeck() {
@@ -89,7 +142,7 @@ public class Game {
         return deck;
     }
 
-    public List<Player> getPlayers() {
+    public Map<String,Player> getPlayers() {
         return players;
     }
 
@@ -117,12 +170,5 @@ public class Game {
 
     }
     
-    public JsonObject toJson() {
-		return (Json.createObjectBuilder()
-				.add("gameid", id)
-				.add("title", title)
-				.add("status", status.toString())
-				.add("numOfPlayers", players.size())
-				.build());
-	}
+    
 }
