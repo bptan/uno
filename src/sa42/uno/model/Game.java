@@ -1,8 +1,12 @@
 package sa42.uno.model;
 
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -11,8 +15,13 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.websocket.Session;
 
-public class Game {
+public class Game implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+
 
     public enum Status {
         Waiting, Started, Ended
@@ -20,69 +29,93 @@ public class Game {
     private final String id;
     private final String title;
     private DeckOfCards deck;
-    private Map<String,Player> players;
-    private Stack<Card> discardPile;
+    private final Map<String, Player> players;
+    private final Stack<Card> table;
+    private Session gameSession;
     private Status status;
 
     public Game(String id, String title) {
         this.id = id;
-        
         this.title = title;
         deck = new DeckOfCards();
         deck = shuffle(deck);
         players = new HashMap<>();
-        discardPile = new Stack<>();
+        table = new Stack<>();
         status = Status.Waiting;
     }
+
+    public Session getGameSession() {
+        return gameSession;
+    }
+
+    public void setGameSession(Session gameSession) {
+        this.gameSession = gameSession;
+        System.out.println("session set inside game"+this.gameSession.getId());
+    }
+
+    public Stack<Card> getTable() {
+        return table;
+    }
+
     public JsonObject toJson() {
-        
-        
-		return (Json.createObjectBuilder()
-				.add("gameid", id)
-				.add("title", title)
-				.add("status", status.toString())
-				.add("numOfPlayers", players.size())
-                                                       
-				.build());
-	}
-    
-    public JsonObject toGameTableJson(){
+
+        return (Json.createObjectBuilder()
+                .add("gameid", id)
+                .add("title", title)
+                .add("status", status.toString())
+                .add("numOfPlayers", players.size())
+                .build());
+    }
+
+    public JsonObject toGameTableJson() {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        
+
         Iterator it = players.entrySet().iterator();
-            while (it.hasNext()){
-                Map.Entry pair = (Map.Entry<String, Player>)it.next();
-                Player p = (Player)pair.getValue();
-                arrayBuilder.add(p.getName());
-                
-            }     
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry<String, Player>) it.next();
+            Player p = (Player) pair.getValue();
+            arrayBuilder.add(p.getName());
+
+        }
         JsonArray playerNameAsJsonArray = arrayBuilder.build();
-        
-        
-		return (Json.createObjectBuilder()
-				.add("gameid", id)
-				.add("title", title)
-				.add("status", status.toString())
-                                .add("deckSize", deck.getNumberOfCards())
-				.add("numOfPlayers", players.size())
-                                .add("playerNames", playerNameAsJsonArray)
-                                .add("topCardOfDiscardPile",discardPile
-                                   .get(discardPile.size()-1).getImage())                        
-				.build());
+
+        return (Json.createObjectBuilder()
+                .add("gameid", id)
+                .add("title", title)
+                .add("status", status.toString())
+                .add("deckSize", deck.getNumberOfCards())
+                .add("numOfPlayers", players.size())
+                .add("playerNames", playerNameAsJsonArray)
+                .add("topCardOfDiscardPile", getTable()
+                        .get(getTable().size() - 1).getImage())
+                .build());
     }
     
-    public Optional<Player> getPlayer(String name){
-        
+    public JsonArray playerNameAsJsonArray(){
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+        Iterator it = players.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry<String, Player>) it.next();
+            Player p = (Player) pair.getValue();
+            arrayBuilder.add(p.getName());
+
+        }        
+        return arrayBuilder.build();       
+    }
+
+    public Optional<Player> getPlayer(String name) {
+
         return Optional.ofNullable(players.get(name));
     }
 
     public void distributeCards() {
         for (int whichCard = 0; whichCard < 7; whichCard++) {
-            
+
             Iterator it = players.entrySet().iterator();
-            while (it.hasNext()){
-                Map.Entry pair = (Map.Entry<String, Player>)it.next();
-                Player p = (Player)pair.getValue();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry<String, Player>) it.next();
+                Player p = (Player) pair.getValue();
                 p.addCard(deck.takeCard());
             }
 //            for (int whichPlayer = 0; whichPlayer < players.size(); whichPlayer++) {
@@ -125,29 +158,15 @@ public class Game {
         return deck.takeCard();
     }
 
-    public int addToDiscardPile(Card c) {
-
-        discardPile.push(c);
-
-        return discardPile.size();
-
-    }
-
-    public Card takeFromTopOfDiscardPile() {
-
-        return discardPile.pop();
-    }
-
     public DeckOfCards getDeck() {
         return deck;
     }
 
-    public Map<String,Player> getPlayers() {
-        return players;
+    public List<Player> getPlayers() {
+        return (Collections.unmodifiableList(new LinkedList<>(players.values())));
     }
-
-    public Stack<Card> getDiscardPile() {
-        return discardPile;
+    public Map<String,Player> getPlayersMAP() {
+        return players;
     }
 
     public String getId() {
@@ -165,10 +184,12 @@ public class Game {
     @Override
     public String toString() {
 
-        return "Game ID: " + id + ", Title: " + title+ ", Status: " + status
+        return "Game ID: " + id + ", Title: " + title + ", Status: " + status
                 + ", Number Of Players: " + players.size();
 
     }
-    
-    
+    public void send(JsonObject msg) throws IOException {
+        gameSession.getBasicRemote().sendText(msg.toString());
+    }
+
 }
