@@ -34,10 +34,17 @@ public class Player implements Serializable {
         return hand.add(c);
     }
 
-    public Card removeCard(int listIndex) {
-        Card thrownToPile = getHand().get(listIndex);
-        getHand().remove(listIndex);
-        return thrownToPile;
+    public Card removeCard(String image) {
+        Card removed=null;
+        for(Card c:hand){
+            if(c.getImage().equals(image)){
+                hand.remove(c);
+                removed =c;
+                System.out.println(removed.toString());
+                break;
+            }
+        }                     
+        return removed;
     }
 
     public String getName() {

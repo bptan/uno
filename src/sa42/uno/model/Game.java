@@ -56,6 +56,10 @@ public class Game implements Serializable {
     public Stack<Card> getTable() {
         return table;
     }
+    public Stack<Card> addToTable(Card c){
+        table.push(c);
+        return table;
+    }
 
     public JsonObject toJson() {
 
